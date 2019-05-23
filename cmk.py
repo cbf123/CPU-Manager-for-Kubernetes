@@ -37,6 +37,7 @@ Usage:
   cmk node-report [--conf-dir=<dir>] [--publish] [--interval=<seconds>]
   cmk uninstall [--install-dir=<dir>] [--conf-dir=<dir>] [--namespace=<name>]
   cmk webhook [--conf-file=<file>]
+  cmk uninstall-webhook [--namespace=<name>]
 
 Options:
   -h --help                    Show this screen.
@@ -145,6 +146,9 @@ def main():
         return
     if args["webhook"]:
         webhook.webhook(args["--conf-file"])
+        return
+    if args["uninstall-webhook"]:
+        uninstall.uninstall_webhook(args["--namespace"])
         return
 
 

@@ -30,29 +30,17 @@ from . import util
 
 
 def uninstall(install_dir, conf_dir, namespace):
-    delete_cmk_pod("cmk-init-install-discover-pod", namespace,
-                   postfix=os.getenv("NODE_NAME"))
-    delete_cmk_pod("cmk-reconcile-nodereport-ds", namespace,
-                   postfix=os.getenv("NODE_NAME"))
-
-    delete_cmk_pod("cmk-node-report-ds-all", namespace)
-    delete_cmk_pod("cmk-reconcile-ds-all", namespace)
-
-    delete_cmk_pod("cmk-cluster-init-pod", namespace)
-    delete_cmk_pod("cmk-discover-pod", namespace)
-    delete_cmk_pod("cmk-init-pod", namespace)
-    delete_cmk_pod("cmk-install-pod", namespace)
-
     remove_all_report()
     remove_node_taint()
     remove_resource_tracking()
-
     check_remove_conf_dir(conf_dir)
     remove_binary(install_dir)
-
-    remove_webhook_resources("cmk-webhook", namespace)
-
     remove_node_label()
+
+
+def uninstall_webhook(namespace):
+    delete_cmk_pod("cmk-cluster-init-pod", namespace)
+    remove_webhook_resources("cmk-webhook", namespace)
 
 
 def remove_binary(install_dir):
