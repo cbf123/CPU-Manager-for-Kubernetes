@@ -239,7 +239,8 @@ def remove_node_label():
     try:
         discover.patch_k8s_node(patch_body)
     except K8sApiException as err:
-        if "nonexistant" not in json.loads(err.body)["message"]:
+        if ("nonexistant" not in json.loads(err.body)["message"] and
+                err.status != 422):
             logging.error(
                 "Aborting uninstall: Exception when removing node "
                 "label \"{}\": {}".format(patch_path, err))
@@ -344,7 +345,8 @@ def remove_node_cmk_er():
         discover.patch_k8s_node_status(patch_body_capacity)
         discover.patch_k8s_node_status(patch_body_allocatable)
     except K8sApiException as err:
-        if "nonexistant" not in json.loads(err.body)["message"]:
+        if ("nonexistant" not in json.loads(err.body)["message"] and
+                err.status != 422):
             logging.error(
                 "Aborting uninstall: Exception when removing ER: "
                 "{}".format(err))
@@ -365,7 +367,12 @@ def remove_webhook_resources(prefix, namespace):
             k8s.delete_service(None, "{}-service".format(prefix), namespace)
             k8s.delete_deployment(None, "cmk-webhook-deployment", namespace)
         except K8sApiException as err:
-            logging.error("Aborting uninstall: Exception when removing "
-                          "webhook: {}".format(err))
-            sys.exit(1)
+            if err.status == 404:
+                msg = json.loads(err.body)["message"]
+                logging.warning("Webhook resource does not exist: "
+                                "{}".format(msg))
+            else:
+                logging.error("Aborting uninstall: Exception when removing "
+                              "webhook: {}".format(err))
+                sys.exit(1)
         logging.info("Removed webhook resources")
