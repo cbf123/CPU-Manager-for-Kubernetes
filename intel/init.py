@@ -55,9 +55,9 @@ def init(conf_dir, num_exclusive_cores, num_shared_cores,
 
         infra_cores = platform.get_shared_cores()
 
+        assign(isolated_cores_shared, "shared", count=num_shared_cores)
         assign(isolated_cores_exclusive, "exclusive",
                count=num_exclusive_cores)
-        assign(isolated_cores_shared, "shared", count=num_shared_cores)
         assign(infra_cores, "infra")
     else:
         logging.info("No isolated physical cores detected: allocating "
@@ -152,6 +152,10 @@ def assign(cores, pool, count=None):
     if not free_cores:
         raise RuntimeError(
             "No more free cores left to assign for {}".format(pool))
+
+    # a value of -1 means "all free cores"
+    if count == -1:
+        count = len(free_cores)
 
     if count and len(free_cores) < count:
         raise RuntimeError("%d cores requested for %s. "
