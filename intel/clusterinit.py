@@ -262,6 +262,7 @@ def deploy_webhook(namespace, conf_dir, install_dir, saname, cmk_img):
     update_pod_with_webhook_container(pod, cmk_img, configmap_name,
                                       secret_name)
     update_pod_with_restart_policy(pod, "Always")
+    update_pod_select_k8s_master_node(pod)
     deployment = k8s.deployment_from(pod)
     try:
         k8s.create_deployment(None, deployment, namespace)
@@ -366,6 +367,10 @@ def update_pod_with_metadata(pod, name, app):
 
 def update_pod_with_restart_policy(pod, restart_pol):
     pod["spec"]["restartPolicy"] = restart_pol
+
+
+def update_pod_select_k8s_master_node(pod):
+    pod["spec"]["nodeSelector"] = {"node-role.kubernetes.io/master": ""}
 
 
 # update_pod_with_container() updates the pod template with a container using
