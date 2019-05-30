@@ -56,7 +56,7 @@ Options:
   --install-dir=<dir>          CMK install directory [default: /opt/bin].
   --interval=<seconds>         Number of seconds to wait between rerunning.
                                If set to 0, will only run once. [default: 0]
-  --num-exclusive-cores=<num>  Number of cores in exclusive pool. [default: 4].
+  --num-exclusive-cores=<num>  Number of cores in exclusive pool. [default: -1].
   --num-shared-cores=<num>     Number of cores in shared pool. [default: 1].
   --pool=<pool>                Pool name: either infra, shared or exclusive.
   --shared-mode=<mode>         Shared pool core allocation mode. Possible
