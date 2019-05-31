@@ -446,7 +446,7 @@ def update_pod_with_webhook_container(pod, cmk_img, configmap_name,
             'secretName': secret_name
          }
     })
-    pod["spec"]["tolerations"] = [{"operator": "Exists"}]
+    pod["spec"]["tolerations"] = [{"operator": "Exists", "key": "cmk", "effect": "NoSchedule"}]
     pod["spec"]["containers"].append(container)
     pod["spec"].pop("nodeName")
 
@@ -524,6 +524,8 @@ def get_default_webhook_mutations_config():
                     "serviceAccount": "cmk-serviceaccount",
                     "tolerations": [
                         {
+                            "key": "cmk",
+                            "effect": "NoSchedule",
                             "operator": "Exists"
                         }
                     ],
